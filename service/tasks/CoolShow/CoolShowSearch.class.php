@@ -261,26 +261,21 @@ class CoolShowSearch
 			
 			$count = $this->_getCoolShowCount($coolshow);
 			
-			if(!$coolshow->bHavePaid || 
-				($nCoolType == COOLXIU_TYPE_THEMES 
-				    && $coolshow->_nProtocolCode >= 3 
-					&& ($coolshow->_nSort == COOLXIU_SEARCH_COMMEN 
-						|| $coolshow->_nSort == COOLXIU_SEARCH_CHOICE )) || 
-				$coolshow->nCharge != 2){
+			if(!$coolshow->bHavePaid || $coolshow->nCharge != 2){
 				$arrProtocol = $this->_getProtocol($coolshow, $strSql);
 			}else{
 				$arrProtocol = $this->_getProtocolMix($coolshow, $start, $limit);
 			}
+			
 			if(!$arrProtocol){
  				Log::write('CoolShowSearch::searchCoolXiuList():_getProtocol() failed', 'log');
 				$result = get_rsp_result(false, 'get protocol failed');
 				return $result;
 			}
 			
-			
 			$result =  array(
-					'total_number'=> $count,
-					'ret_number'  => count($arrProtocol),
+					'total'=> $count,
+					'rnum'  => count($arrProtocol),
 					$coolshow->strType     => $arrProtocol
 			);
 			
