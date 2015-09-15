@@ -13,18 +13,14 @@ require_once 'tasks/CoolShow/HotWord.class.php';
 
 class CoolShowSearch
 {
-	private $_memcached;
+	private $_memdb;
 	private $_db;
 	private $_rdb;
-	private $_channel;
-	private $_dbconfig;
-
 	public function __construct($dbConfig=array())
 	{
 		$this->_memdb 	  = null;
 		$this->_db 		  = null;
 		$this->_rdb		  = null;
-		$this->_dbconfig  = $dbConfig;
 	}
 	
 	private function _getMem()
@@ -32,7 +28,7 @@ class CoolShowSearch
 		if(!$this->_memdb){
 			$this->_memdb = new MemDb();
 			global $g_arr_memcache_config;
-			$this->_memcached->connectMemcached($g_arr_memcache_config);
+			$this->_memdb->connectMemcached($g_arr_memcache_config);
 		}
 		return $this->_memdb;
 	}
@@ -196,7 +192,7 @@ class CoolShowSearch
 	private function _getCoolShowCount(CoolShow $coolshow)
 	{
 		$strSql = $coolshow->getCoolShowCountSql();
-		$result = $this->_memcached->getSearchResult($strSql);
+		$result = $this->_getMem()->getSearchResult($strSql);
 		if($result){
 			return $result;
 		}
@@ -206,7 +202,7 @@ class CoolShowSearch
 			Log::write('CoolShowSearch::_getCoolShowCount():getCoolShowCount() failed, SQL:'.$strSql, 'log');
 			return false;
 		}
-		$this->_memcached->setSearchResult($strSql, $count, 12*60*60);
+		$this->_getMem()->setSearchResult($strSql, $count, 12*60*60);
 		return $count;
 	}
 	
@@ -253,7 +249,7 @@ class CoolShowSearch
 				return $result;
 			}
 			
-			$result = $this->_memcached->getSearchResult($strSql.$coolshow->nCharge);
+			$result = $this->_getMem()->getSearchResult($strSql.$coolshow->nCharge);
 			if($result){
 // 				Log::write('CoolXiuDb::searchCoolXiuList():getSearchResult()'.$strSql, 'log');
 				return json_encode($result);
@@ -279,7 +275,7 @@ class CoolShowSearch
 					$coolshow->strType     => $arrProtocol
 			);
 			
- 			$this->_memcached->setSearchResult($strSql.$coolshow->nCharge, $result, 60*60);
+ 			$this->_getMem()->setSearchResult($strSql.$coolshow->nCharge, $result, 60*60);
 			
 		}catch(Exception $e){
 			Log::write('CoolShowSearch::getCoolShow() excepton error:'.$e->getMessage(), 'log');
@@ -304,7 +300,7 @@ class CoolShowSearch
 			}
 			
 //  		Log::write('CoolShowSearch::getBanner():getSearchResult() SQL:'.$strSql, 'debug');
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write('CoolShowSearch::getBanner():getSearchResult()'.$strSql, 'log');
 				return $result;
@@ -325,7 +321,7 @@ class CoolShowSearch
 			$result = array('result'=>true,
 							'banners'=>$protocol);
 			$json_result = json_encode($result);
-			$this->_memcached->setSearchResult($strSql, $json_result, 24*60*60);
+			$this->_getMem()->setSearchResult($strSql, $json_result, 24*60*60);
 			
 		}catch(Exception $e){
 			Log::write("CoolShowSearch::getBanner(): excepton error:".$e->getMessage(), "log");
@@ -359,7 +355,7 @@ class CoolShowSearch
 				return $result;
 			}
 
-			$result = $this->_memcached->getSearchResult($strSql.$strAlbum);
+			$result = $this->_getMem()->getSearchResult($strSql.$strAlbum);
 			if($result){
 // 				Log::write('CoolShowSearch::getBanner():getSearchResult()'.$strSql, 'log');
 				return $result;
@@ -393,7 +389,7 @@ class CoolShowSearch
 			$result = array('result'=>true,
 							'banners'=>$protocol);
 			$json_result = json_encode($result);
-			$this->_memcached->setSearchResult($strSql.$strAlbum, $json_result, 24*60*60);
+			$this->_getMem()->setSearchResult($strSql.$strAlbum, $json_result, 24*60*60);
 			
 		}catch(Exception $e){
 			Log::write("CoolShowSearch::getBannerList(): excepton error:".$e->getMessage(), "log");
@@ -416,7 +412,7 @@ class CoolShowSearch
 				return $result;
 			}
 			
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write('CoolShowSearch::getAndroideskBanner():getSearchResult()'.$strSql, 'log');
 				return $result;
@@ -459,7 +455,7 @@ class CoolShowSearch
 			}
 				
 //  		Log::write('CoolShowSearch::getBanner():getSearchResult() SQL:'.$strSql, 'debug');
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write('CoolShowSearch::getBanner():getSearchResult()'.$strSql, 'log');
 				return $result;
@@ -480,7 +476,7 @@ class CoolShowSearch
 			$result = array('result'=>true,
 							$coolshow->strType=>$protocol);
 			$json_result = json_encode($result);
-			$this->_memcached->setSearchResult($strSql, $json_result, 24*60*60);
+			$this->_getMem()->setSearchResult($strSql, $json_result, 24*60*60);
 				
 		}catch(Exception $e){
 			Log::write("CoolShowSearch::getWidgetBanner(): excepton error:".$e->getMessage(), "log");
@@ -501,7 +497,7 @@ class CoolShowSearch
 							
 			$memKey = 'banner'.$nCoolType.$strId.$nStart.$nNum.$nKernel.$nWidth.$nHeight.$protocolCode;
 			
-			$result = $this->_memcached->getSearchResult($memKey);
+			$result = $this->_getMem()->getSearchResult($memKey);
 			if($result){
 // 				Log::write("CoolShowSearch::getAlbum():getSearchResult()".$strSql, "debug");
 				return $result;
@@ -518,7 +514,7 @@ class CoolShowSearch
 							'albums'=>$arrProtocol);
 			$json_result = json_encode($result);
 			
-			$this->_memcached->setSearchResult($memKey, $json_result, 24*60*60);
+			$this->_getMem()->setSearchResult($memKey, $json_result, 24*60*60);
 			
 		}catch(Exception $e){
 			Log::write("CoolShowSearch::getAlbum(): excepton error:".$e->getMessage(), "log");
@@ -571,7 +567,7 @@ class CoolShowSearch
 			$protocolCode = (int)(isset($_GET['protocolCode'])?$_GET['protocolCode']:1);
 			
 			$memKey = 'newbanner'.$strId.$nKernel.$nWidth.$nHeight.$protocolCode;
-			$result = $this->_memcached->getSearchResult($memKey);
+			$result = $this->_getMem()->getSearchResult($memKey);
 			if($result){
 // 				Log::write('CoolShowSearch::getNewBanner():getSearchResult()'.$memKey, 'debug');
 				return $result;
@@ -623,7 +619,7 @@ class CoolShowSearch
 			
 			$json_result = json_encode($result);
 				
-			$this->_memcached->setSearchResult($memKey, $json_result, 24*60*60);
+			$this->_getMem()->setSearchResult($memKey, $json_result, 24*60*60);
 				
 		}catch(Exception $e){
 			Log::write("CoolShowSearch::getNewBanner(): excepton error:".$e->getMessage(), "log");
@@ -646,7 +642,7 @@ class CoolShowSearch
 				Log::write("CoolShowSearch::getRsc():getSelectRscSql() failed Sql is empty", "log");
 				return false;
 			}
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write("CoolShowSearch::getRsc():getSearchResult()".$strSql, "log");
 				return $result;
@@ -666,7 +662,7 @@ class CoolShowSearch
 
 			$result = array('key'=>$coolshow->strType,
 						'result'=>$arrProtocol);
- 			$bResult = $this->_memcached->setSearchResult($strSql, $result);
+ 			$bResult = $this->_getMem()->setSearchResult($strSql, $result);
 			if(!$bResult){
 				Log::write("CoolShowSearch::getRsc() failed", "log");
 			}
@@ -685,7 +681,7 @@ class CoolShowSearch
 		global $g_arr_host_config;
 		
 		$strSql  = $coolshow->getSelectInfoByIdSql($id, $nChannel);
-		$result = $this->_memcached->getSearchResult($strSql);
+		$result = $this->_getMem()->getSearchResult($strSql);
 		if($result){
 			foreach ($result as $row){
 				$strUrl = $g_arr_host_config['cdnhost'].$row['url'];
@@ -703,7 +699,7 @@ class CoolShowSearch
 			$strUrl = $g_arr_host_config['cdnhost'].$row['url'];
 		}
 		
-		$result = $this->_memcached->setSearchResult($strSql, $rows);
+		$result = $this->_getMem()->setSearchResult($strSql, $rows);
 		if(!$result){
 			Log::write("CoolShowSearch::getUrl():setSearchResult() failed", "log");
 		}
@@ -718,7 +714,7 @@ class CoolShowSearch
 		global $g_arr_host_config;
 		$strSql  = $coolshow->getSelectInfoByIdSql($id, $nChannel);
 		
-		$result = $this->_memcached->getSearchResult($strSql);
+		$result = $this->_getMem()->getSearchResult($strSql);
 		if($result){
 			foreach ($result as $row){
 				$strUrl = $g_arr_host_config['cdnhost'].$row['mid_url'];
@@ -736,7 +732,7 @@ class CoolShowSearch
 			$strUrl = $g_arr_host_config['cdnhost'].$row['mid_url'];
 		}
 	
-		$result = $this->_memcached->setSearchResult($strSql, $rows);
+		$result = $this->_getMem()->setSearchResult($strSql, $rows);
 		if(!$result){
 			Log::write("CoolShowSearch::getBrowseUrl():setSearchResult() failed", "log");
 		}
@@ -748,7 +744,7 @@ class CoolShowSearch
 		$coolshow = CoolShowFactory::getCoolShow($nCoolType);
 		$bCharge = false;
 		$strSql  = $coolshow->getSelectInfoByIdSql($id);
-		$result = $this->_memcached->getSearchResult($strSql);
+		$result = $this->_getMem()->getSearchResult($strSql);
 		if($result){
 			foreach ($result as $row){
 				$bCharge = isset($row['ischarge'])?$row['ischarge']:false;
@@ -766,7 +762,7 @@ class CoolShowSearch
 			$bCharge = isset($row['ischarge'])?$row['ischarge']:false;
 		}
 		
-		$result = $this->_memcached->setSearchResult($strSql, $rows);
+		$result = $this->_getMem()->setSearchResult($strSql, $rows);
 		if(!$result){
 			Log::write("CoolShowSearch::getBrowseUrl():setSearchResult() failed", "log");
 		}
@@ -812,7 +808,7 @@ class CoolShowSearch
 			$data = $coolshow->getLuceneParam($nCoolType, $strKeyWord, $bColor, $nPage, $nLimit);
 			$coolshow->setChannel(REQUEST_CHANNEL_LUCENE);
 	
-			$result = $this->_memcached->getSearchResult($data.$nCoolType);
+			$result = $this->_getMem()->getSearchResult($data.$nCoolType);
 			if($result){
 // 				Log::write('CoolXiuDb::searchLucene():getSearchResult()'.$sql, 'log');
 				return json_encode($result);
@@ -834,7 +830,7 @@ class CoolShowSearch
 							 'ret_number'  => count($arrProtocol),
 							 $coolshow->strType     => $arrProtocol
 						);
-			$this->_memcached->setSearchResult($data, $result, 12*60*60);
+			$this->_getMem()->setSearchResult($data, $result, 12*60*60);
 		}catch(Exception $e){
 			Log::write("CoolShowSearch::searchLucene(): excepton error:".$e->getMessage(), "log");
 			$result = get_rsp_result(false, 'get lucene exception');
@@ -880,7 +876,7 @@ class CoolShowSearch
 			$this->_setCoolShowParam($coolshow);
 			$data = $coolshow->getLuceneParam($nCoolType, $strKeyWord);
 				
-			$result = $this->_memcached->getSearchResult($data.'forweb');
+			$result = $this->_getMem()->getSearchResult($data.'forweb');
 			if($result){
 				// 				Log::write('CoolShowSearch::_luceneCoolshow():getSearchResult()'.$sql, 'log');
 				return $result;
@@ -906,7 +902,7 @@ class CoolShowSearch
 				return false;
 			}
 				
-			$this->_memcached->setSearchResult($data.'forweb', $arrProtocol, 12*60*60);
+			$this->_getMem()->setSearchResult($data.'forweb', $arrProtocol, 12*60*60);
 				
 			return $arrProtocol;
 				
@@ -965,7 +961,7 @@ class CoolShowSearch
 				return $result;
 			}
 	
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write("CoolXiuDb::searchCoolXiuListForWeb():getSearchResult()".$sql, 'log');
 				return json_encode($result);
@@ -985,7 +981,7 @@ class CoolShowSearch
 				return $result;
 			}
 			
-			$this->_memcached->setSearchResult($strSql, $result);
+			$this->_getMem()->setSearchResult($strSql, $result);
 			
 		}catch(Exception $e){
 			Log::write('CoolShowSearch::searchWeb(): excepton error:'.$e->getMessage(), 'log');
@@ -1016,7 +1012,7 @@ class CoolShowSearch
 				return $result;
 			}
 
-			$result = $this->_memcached->getSearchResult($strSql.$channel);
+			$result = $this->_getMem()->getSearchResult($strSql.$channel);
 			if($result){
 //				Log::write("CoolXiuDb::getCoolXiuDetails():getSearchResult()".$sql, "log");
 				return json_encode($result);
@@ -1050,7 +1046,7 @@ class CoolShowSearch
 							 'details' =>$theme,
 							);
 			
-			$this->_memcached->setSearchResult($strSql.$channel, $result);
+			$this->_getMem()->setSearchResult($strSql.$channel, $result);
 			
 		}catch(Exception $e){
 			Log::write('CoolShowSearch::getCoolShowDetail(): excepton error:'.$e->getMessage(), 'log');
@@ -1163,7 +1159,7 @@ class CoolShowSearch
 			$coolshow->setChannel(REQUEST_CHANNEL_RECOMMENED);
 
 			$strSql = $coolshow->getRecommendSql();
-			$result = $this->_memcached->getSearchResult($strSql.$strCpid);
+			$result = $this->_getMem()->getSearchResult($strSql.$strCpid);
 			if($result){
 // 				Log::write('CoolXiuDb::searchCoolXiuList():getSearchResult()'.$strSql, 'log');
 				return json_encode($result);
@@ -1186,7 +1182,7 @@ class CoolShowSearch
 							'score'=>$score,
 							'recommend' => $arrProtocol);
 			
-			$this->_memcached->setSearchResult($strSql.$strCpid, $result, 60*60);
+			$this->_getMem()->setSearchResult($strSql.$strCpid, $result, 60*60);
 			return json_encode($result);
 			
 		}catch (Exception $e){
@@ -1234,7 +1230,7 @@ class CoolShowSearch
 			}
 				
 // 	  		Log::write('CoolShowSearch::getWPBannerTop():getSearchResult() SQL:'.$strSql, 'debug');
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 //  				Log::write('CoolShowSearch::getWPBannerTop():getSearchResult()'.$strSql, 'log');
 				return $result;
@@ -1254,7 +1250,7 @@ class CoolShowSearch
 				array_push($arrBanner, 	$row);
 			}
 			
-			$this->_memcached->setSearchResult($strSql, $arrBanner, 60*60);
+			$this->_getMem()->setSearchResult($strSql, $arrBanner, 60*60);
 			
 			return $arrBanner;
 			
@@ -1278,7 +1274,7 @@ class CoolShowSearch
 			}
 		
 // 			Log::write('CoolShowSearch::getWPBannerTopList():getSearchResult() SQL:'.$strSql, 'debug');
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write('CoolShowSearch::getWPBannerTopList():getSearchResult()'.$strSql, 'log');
 				return $result;
@@ -1298,7 +1294,7 @@ class CoolShowSearch
 								'wallpapers'=>$arrProtocol);
 			
 			$json_rsp = json_encode($arrRsp);	
-			$this->_memcached->setSearchResult($strSql, $json_rsp, 24 * 60*60);
+			$this->_getMem()->setSearchResult($strSql, $json_rsp, 24 * 60*60);
 				
 			return $json_rsp;
 				
@@ -1322,7 +1318,7 @@ class CoolShowSearch
 			}
 		
 //  		Log::write('CoolShowSearch::getChoiceWallpaer():getCoolShowListSql(), SQL:'.$strSql, 'debug');
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write('CoolShowSearch::getChoiceWallpaer():getSearchResult()'.$strSql, 'log');
 				return $result;
@@ -1347,7 +1343,7 @@ class CoolShowSearch
 					$coolshow->strType     => $arrProtocol
 			);
 		
-			$this->_memcached->setSearchResult($strSql, $result, 12*60*60);
+			$this->_getMem()->setSearchResult($strSql, $result, 12*60*60);
 		
 		}catch(Exception $e){
 			Log::write('CoolShowSearch::getWallpaper() excepton error:'.$e->getMessage(), 'log');
@@ -1379,7 +1375,7 @@ class CoolShowSearch
 				return $result;
 			}
 		
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write('CoolShowSearch::getChoiceWallpaer():getSearchResult()'.$strSql, 'log');
 				return $result;
@@ -1397,7 +1393,7 @@ class CoolShowSearch
 							'hotwords'  => $rows);
 		
 			$result = json_encode($result);
-			$this->_memcached->setSearchResult($strSql, $result, 12*60*60);
+			$this->_getMem()->setSearchResult($strSql, $result, 12*60*60);
 			
 			return $result;
 		
@@ -1433,7 +1429,7 @@ class CoolShowSearch
 				return $result;
 			}
 
-			$result = $this->_memcached->getSearchResult($strSql);
+			$result = $this->_getMem()->getSearchResult($strSql);
 			if($result){
 // 				Log::write('CoolXiuDb::getDesignerCoolShow():getSearchResult()'.$strSql, 'log');
 				return json_encode($result);
@@ -1454,7 +1450,7 @@ class CoolShowSearch
 							 $coolshow->strType     => $arrProtocol
 			);
 			
- 			$this->_memcached->setSearchResult($strSql, $result, 60*60);
+ 			$this->_getMem()->setSearchResult($strSql, $result, 60*60);
 		
  			return json_encode($result);
 		}catch(Exception $e){
