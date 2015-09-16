@@ -59,6 +59,7 @@ class BannerProtocol
 			$strTemp  =  isset($row['newurl'])?$row['newurl']:'';
 			$strUrl = empty($strTemp)?$strUrl:$strTemp;
 		}
+		
 		global $g_arr_host_config;
 		$this->bannerUrl	= $g_arr_host_config['cdnhost'].$strUrl;
 		if($nCoolType == COOLXIU_TYPE_ANDROIDESK_WALLPAPER){

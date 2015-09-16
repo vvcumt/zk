@@ -1,7 +1,6 @@
 <?php
 
-require_once ('configs/config.php');
-require_once 'tasks/statis/Product.class.php';
+require_once 'configs/config.php';
 
 class WallpaperProtocol{
 	
@@ -55,8 +54,6 @@ class WallpaperProtocol{
 		$this->wpmurl 			= $g_arr_host['host'].$row['mid_url'];
 		$this->wpsurl 			= $g_arr_host_config['cdnhost'].$row['small_url'];
 		
-// 		$this->width			= $row['width'];
-// 		$this->height			= $row['height'];
 		$this->dltimes			= (int)isset($row['download_times'])?$row['download_times']:1001;
 		$this->download_times	+= rand(1000, 10000);
 		$this->author			=   isset($row['author'])?$row['author']:'';
@@ -73,9 +70,7 @@ class WallpaperProtocol{
 		$this->wpurl 			= $g_arr_host['host'].$row['url'];
 		$this->wpmurl 			= $g_arr_host['host'].$row['mid_url'];
 		$this->wpsurl 			= $g_arr_host_config['cdnhost'].$row['small_url'];
-		
-// 		$this->width			= $row['width'];
-// 		$this->height			= $row['height'];
+
 		$this->dltimes			= (int)isset($row['download_times'])?$row['download_times']:1001;
 		$this->dltimes			+= rand(1000, 10000);
 		$this->author			=   isset($row['author'])?$row['author']:'';

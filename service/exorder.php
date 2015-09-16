@@ -14,21 +14,23 @@ require_once 'lib/WriteLog.lib.php';
 require_once 'public/public.php';
 require_once 'configs/config.php';
 
-$nCoolType = isset($_GET['type'])?$_GET['type']:0;
-$strId = isset($_GET['id'])?$_GET['id']:'';
-$strCpid = isset($_GET['cpid'])?$_GET['cpid']:'';
+$nCoolType 	= isset($_GET['type'])?$_GET['type']:0;
+$strId 		= isset($_GET['id'])?$_GET['id']:'';
+$strCpid 	= isset($_GET['cpid'])?$_GET['cpid']:'';
 if(empty($strId)){
 	echo get_rsp_result(false, 'id is empty');
 	exit;
 }
+
 $strProduct = '';
 $strMeid	= '';
 $strImei	= '';
 $strImsi	= '';
-$strCyid	= '';
+$strUid		= '';
 $strNet		= '';
-$kernel		= isset($_GET['kernelCode'])?$_GET['kernelCode']:0;
-$strVercode	= isset($_GET['versionCode'])?$_GET['versionCode']:0;
+$kernel		= isset($_GET['kernel'])?$_GET['kernel']:0;
+$strVercode	= isset($_GET['vercode'])?$_GET['vercode']:0;
+
 $json_param = isset($_POST['statis'])?$_POST['statis']:'';
 if(!empty($json_param)){
 	$json_param = stripslashes($json_param);
@@ -38,13 +40,12 @@ if(!empty($json_param)){
 	$strMeid	 = isset($arr_param['meid'])?$arr_param['meid']:'';
 	$strImei	 = isset($arr_param['imei'])?$arr_param['imei']:'';
 	$strImsi	 = isset($arr_param['imsi'])?$arr_param['imsi']:'';
-	$strCyid	 = isset($arr_param['cyid'])?$arr_param['cyid']:'';
-	$strNet		 = isset($arr_param['network'])?$arr_param['network']:'';
-	$strVercode	 = isset($arr_param['versionCode'])?$arr_param['versionCode']:$strVercode;
+	$strUid	 	 = isset($arr_param['uid'])?$arr_param['uid']:'';
+	$strNet		 = isset($arr_param['net'])?$arr_param['net']:'';
 }
 
 $erDb = new ExorderRecordDb();
-$bResult = $erDb->checkMobileCharged($strProduct, $nCoolType, $strId, $strCpid, $strMeid, $strImsi, $strCyid);
+$bResult = $erDb->checkMobileCharged($strProduct, $nCoolType, $strId, $strCpid, $strMeid, $strImsi, $strUid);
 if($bResult){
 	$reuslt = array('result'=>true,
 					'exorder'=>'',
@@ -65,8 +66,8 @@ $reuslt = array('result'=>true,
 echo json_encode($reuslt);
 
 
-$lookup		= isset($_GET['lookup'])?$_GET['lookup']:0;#0表示拉取订单号和收费信息，1表示查询收费信息
-if($lookup){
+$bQuery		= isset($_GET['query'])?$_GET['query']:0;#0表示拉取订单号和收费信息，1表示查询收费信息
+if($bQuery){
 	exit();
 }
 
@@ -106,7 +107,7 @@ foreach ($arrRsc as $rsc){
 $erDb->saveMobileExorder($nCoolType, $strExorder, $ruleid, $score, 
 						$strId, $cpid, $name, $userid, $author, $type,
 						$appid, $waresid, $money,
-						$strProduct, $strMeid, $strCyid, $strImsi, $strNet,
+						$strProduct, $strMeid, $strUid, $strImsi, $strNet,
 						$strVercode, $kernel);
 
 $rf = new RecordTask();

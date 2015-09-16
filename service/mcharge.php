@@ -24,29 +24,14 @@ try{
 		exit();
 	}
 	
-	
 	echo get_rsp_result(true);
-	
+
 	require_once 'tasks/Records/RecordTask.class.php';
 	$rt = new RecordTask();
 	
-	$nCoolType = 0;
-	$isScore   = 0;
-	$nProtocolCode = isset($_GET['protocolCode'])?$_GET['protocolCode']:0;
-	if(isset($_GET['type']))
-	{
-		$nCoolType = $_GET['type'];
-	}else{
-		$exorder = $erDb->getExorderById($strExorder);
-		if(!$exorder){
-			Log::write('mcharge getExorderById() failed', 'log');
-			exit(get_rsp_result(false, 'get exorder failed'));
-		}
-		$nCoolType = isset($exorder['cooltype'])?$exorder['cooltype']:0;
-	}
-
-	$strCyid   = isset($_GET['cyid'])?$_GET['cyid']:'';
-	if (!empty($strCyid)){
+	$nCoolType = isset($_GET['mtype'])?$_GET['mtype']:0;
+	$strCyid   = isset($_GET['uid'])?$_GET['uid']:'';
+	if (!empty($strUid)){
 		$strId 	 = isset($_GET['id'])?$_GET['id']:'';
 		$strCpid = isset($_GET['cpid'])?$_GET['cpid']:'';
 		$erDb->saveChargeRecord($strExorder, $strCyid, $nCoolType, $strId, $strCpid);

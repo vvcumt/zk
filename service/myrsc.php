@@ -9,7 +9,7 @@ require_once 'lib/WriteLog.lib.php';
 
 try{
 	$nCoolType = isset($_GET['type'])?$_GET['type']:0;  //cooltype:主题、壁纸、铃声、字体等分类
-	$strCyid     = isset($_GET['cyid'])?$_GET['cyid']:'';
+	$strUid     = isset($_GET['uid'])?$_GET['uid']:'';
 	$nPage     = isset($_GET['page'])?$_GET['page']:0;
 	$nNum     = isset($_GET['num'])?$_GET['num']:0;
 	
@@ -18,7 +18,7 @@ try{
 	require_once 'tasks/Exorder/ExorderRecordDb.class.php';
 	$erDb = new ExorderRecordDb();
 	
-	$rows = $erDb->getChargeRecord($strCyid, $nCoolType, $nStart, $nNum);
+	$rows = $erDb->getChargeRecord($strUid, $nCoolType, $nStart, $nNum);
 	if($rows === false){
 		Log::write('myrsc getChargeRecord() failed', 'log');
 		echo get_rsp_result(false, 'get charge record failed');

@@ -42,6 +42,7 @@ abstract class CoolShow
 		$this->nPay			= 1;
 		$this->nFree		= 1;
 		$this->strPayCondition = '';
+		$this->_bSceneWallpaer = false;
 	}
 
 	public function setSceneWallpaper($bSceneWallpaper)

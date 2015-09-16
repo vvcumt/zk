@@ -377,14 +377,14 @@ class CoolShowSearch
 				return $result;
 			}
 			
-			if(($nCoolType == COOLXIU_TYPE_ANDROIDESK_WALLPAPER 
-				|| $nCoolType == COOLXIU_TYPE_WALLPAPER)
-				&& $bAlbum == 0){
-				//合并安卓壁纸资源
-				$arrAndroidBanner = $this->_getAndroideskBanner($bSceneWallpaper);
-				$arrTemp = array_merge($protocol['top'], $arrAndroidBanner);
-				$protocol['top'] = $arrTemp;
-			}			
+// 			if(($nCoolType == COOLXIU_TYPE_ANDROIDESK_WALLPAPER 
+// 				|| $nCoolType == COOLXIU_TYPE_WALLPAPER)
+// 				&& $bAlbum == 0){
+// 				//合并安卓壁纸资源
+// 				$arrAndroidBanner = $this->_getAndroideskBanner($bSceneWallpaper);
+// 				$arrTemp = array_merge($protocol['top'], $arrAndroidBanner);
+// 				$protocol['top'] = $arrTemp;
+// 			}			
 			
 			$result = array('result'=>true,
 							'banners'=>$protocol);
@@ -561,10 +561,10 @@ class CoolShowSearch
 	public function getNewBanner($nCoolType, $strId, $nChannel = 5)
 	{
 		try {
-			$nKernel   = (int)(isset($_GET['kernelCode']))?$_GET['kernelCode']:1;#默认值不可变，防止最初版本（未增加此字段的版本）异常
+			$nKernel   = (int)(isset($_GET['kernel']))?$_GET['kernel']:1;#默认值不可变，防止最初版本（未增加此字段的版本）异常
 			$nWidth    = (int)(isset($_GET['width']))?$_GET['width']:540;
 			$nHeight   = (int)(isset($_GET['height']))?$_GET['height']:960;
-			$protocolCode = (int)(isset($_GET['protocolCode'])?$_GET['protocolCode']:1);
+			$protocolCode = (int)(isset($_GET['procode'])?$_GET['procode']:1);
 			
 			$memKey = 'newbanner'.$strId.$nKernel.$nWidth.$nHeight.$protocolCode;
 			$result = $this->_getMem()->getSearchResult($memKey);
@@ -585,37 +585,39 @@ class CoolShowSearch
 				$arrWallpaper = array();
 			}
 			
-			$arrFont = $this->_getAlbums(COOLXIU_TYPE_FONT, $strId, $nChannel);
-			if ($arrFont === false){
-				Log::write('CoolShowSearch::getNewBanner() get arrFont false', 'log');
-				$arrFont = array();
-			}
+// 			$arrFont = $this->_getAlbums(COOLXIU_TYPE_FONT, $strId, $nChannel);
+// 			if ($arrFont === false){
+// 				Log::write('CoolShowSearch::getNewBanner() get arrFont false', 'log');
+// 				$arrFont = array();
+// 			}
 			
-			$arrScene = $this->_getAlbums(COOLXIU_TYPE_SCENE, $strId, $nChannel);
-			if ($arrScene === false){
-				Log::write('CoolShowSearch::getNewBanner() get arrScene false', 'log');
-				$arrScene = array();
-			}
+// 			$arrScene = $this->_getAlbums(COOLXIU_TYPE_SCENE, $strId, $nChannel);
+// 			if ($arrScene === false){
+// 				Log::write('CoolShowSearch::getNewBanner() get arrScene false', 'log');
+// 				$arrScene = array();
+// 			}
 			
-			$arrRing = $this->_getAlbums(COOLXIU_TYPE_RING, $strId, $nChannel);
-			if ($arrRing === false){
-				Log::write('CoolShowSearch::getNewBanner() get arrRing false', 'log');
-				$arrRing = array();
-			}
+// 			$arrRing = $this->_getAlbums(COOLXIU_TYPE_RING, $strId, $nChannel);
+// 			if ($arrRing === false){
+// 				Log::write('CoolShowSearch::getNewBanner() get arrRing false', 'log');
+// 				$arrRing = array();
+// 			}
 			
-			$arrLwp = array();//$this->_getAlbums(COOLXIU_TYPE_LIVE_WALLPAPER, $strId, $nChannel);
-			if ($arrLwp === false){
-				Log::write('CoolShowSearch::getNewBanner() get arrLwp false', 'log');
-				$arrLwp = array();
-			}
+// 			$arrLwp = array();
+// 			$this->_getAlbums(COOLXIU_TYPE_LIVE_WALLPAPER, $strId, $nChannel);
+// 			if ($arrLwp === false){
+// 				Log::write('CoolShowSearch::getNewBanner() get arrLwp false', 'log');
+// 				$arrLwp = array();
+// 			}
 			
 			$result = array('result'=>true,
 							'themes'=>$arrTheme,
 							'wallpapers'=>$arrWallpaper,
-							'fonts'=>$arrFont,
-							'lockscreens'=>$arrScene,
-							'ring'=>$arrRing,
-							'livewallpapers'=>$arrLwp,);
+// 							'fonts'=>$arrFont,
+// 							'lockscreens'=>$arrScene,
+// 							'ring'=>$arrRing,
+// 							'livewallpapers'=>$arrLwp,
+							);
 			
 			$json_result = json_encode($result);
 				
@@ -1042,7 +1044,7 @@ class CoolShowSearch
 				$theme = $arrTheme[0];
 			}	
 			
-			$result =  array('result'  => $theme?true:false,
+			$result =  array('result'  =>$theme?true:false,
 							 'details' =>$theme,
 							);
 			

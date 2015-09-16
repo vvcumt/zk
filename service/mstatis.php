@@ -59,10 +59,6 @@ if (!isset($_GET['id'])){
 	exit(get_rsp_result(false, 'id is empty'));
 }
 
-//MYSQL记录
-$statis = new StatisInterface();
-$result = $statis->saveStatis();
-
 //mongodb记录
 $rt = new RecordTask();
 $result = $rt->saveStaticRecord();

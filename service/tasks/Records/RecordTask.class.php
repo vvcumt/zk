@@ -300,12 +300,8 @@ class RecordTask
 	{
 		$strId 	 	 = isset($_GET['id'])?$_GET['id']:'';
 		$strCpid 	 = isset($_GET['cpid'])?$_GET['cpid']:'';
-		$nCoolType 	 = isset($_GET['moduletype'])?$_GET['moduletype']:'';
+		$nCoolType 	 = isset($_GET['mtype'])?$_GET['mtype']:'';
 		$nOpType  	 = isset($_GET['optype'])?$_GET['optype']:-1;
-		$nType 	   	 = (int)(isset($_GET['type'])?$_GET['type']:0);
-		if ($nCoolType == COOLXIU_TYPE_RING){
-			$nType = $nType - 1;
-		}
 		
 		#ICON图标、通讯录都是主题模块的别名
 		if($nCoolType == COOLXIU_TYPE_THEMES_CONTACT
@@ -319,11 +315,7 @@ class RecordTask
 		$result = false;		
 		switch ($nOpType){
 			case self::YL_COOLSHOW_OPTYPE_REQ:
-				if ($nCoolType == COOLXIU_TYPE_RING && $nType == 2){
-					$result = $this->saveXRequest(COOLXIU_TYPE_X_RING);
-				}else{
-					$result = $this->saveRequest($nCoolType);
-				}
+				$result = $this->saveRequest($nCoolType);
 				break;
 			case self::YL_COOLSHOW_OPTYPE_BROWSER:
 				$result = $this->saveBrowse($nCoolType);

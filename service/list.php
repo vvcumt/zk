@@ -36,7 +36,7 @@
 require_once 'public/public.php';
 
 $nPage = isset($_GET['page'])?$_GET['page']:0;
-$nNum  = isset($_GET['reqNum'])?$_GET['reqNum']:10;
+$nNum  = isset($_GET['reqnum'])?$_GET['reqnum']:10;
 $nStart 	  = $nNum * $nPage;
 
 if(!is_numeric($req_num) || !is_numeric($req_page)){
